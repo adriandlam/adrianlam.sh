@@ -628,9 +628,9 @@ export function ExploringMap({ hikes, landmarks }: ExploringMapProps) {
 				</Source>
 			</MapGL>
 
-			{/* Animated info card */}
+			{/* Animated info card — bottom-center on mobile, trail-relative on desktop */}
 			<AnimatePresence>
-				{selected && popupPos && (
+				{selected && (
 					<motion.div
 						key={
 							selected.type === "hike"
@@ -641,19 +641,29 @@ export function ExploringMap({ hikes, landmarks }: ExploringMapProps) {
 						animate={{ opacity: 1, y: 0, scale: 1 }}
 						exit={{ opacity: 0, y: 4, scale: 0.97 }}
 						transition={{ duration: 0.12, ease: "easeOut" }}
-						className="absolute z-20 bg-background/50 backdrop-blur border border-border rounded-lg px-5 py-4 shadow-xl pointer-events-auto"
-						style={{
-							left: popupPos.x,
-							top: popupPos.y,
-							transform: `translate(${popupTransform.tx}, ${popupTransform.ty})`,
-						}}
+						className="absolute z-20 bg-background/50 backdrop-blur border border-border rounded-lg shadow-xl pointer-events-auto px-4 py-3 md:px-5 md:py-4"
+						style={
+							popupPos &&
+							typeof window !== "undefined" &&
+							window.innerWidth >= 768
+								? {
+										left: popupPos.x,
+										top: popupPos.y,
+										transform: `translate(${popupTransform.tx}, ${popupTransform.ty})`,
+									}
+								: {
+										bottom: 32,
+										left: "50%",
+										transform: "translateX(-50%)",
+									}
+						}
 					>
 						{selected.type === "hike" ? (
 							<div>
 								<div className="text-sm font-medium text-foreground leading-tight mb-2">
 									{selected.hike.name}
 								</div>
-								<div className="flex gap-4 whitespace-nowrap">
+								<div className="flex gap-4 whitespace-nowrap max-md:flex-wrap max-md:gap-3">
 									<div>
 										<div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
 											Distance

@@ -13,7 +13,7 @@ function formatElevation(meters: number): string {
 
 export function ExploringStatsOverlay({ stats }: ExploringStatsProps) {
 	return (
-		<div className="absolute top-6 right-6 z-10 flex gap-5 max-md:top-20 max-md:right-4 max-md:gap-4">
+		<div className="absolute top-6 right-6 z-10 flex gap-5 max-md:top-4 max-md:right-4 max-md:gap-3">
 			<div className="text-right">
 				<div className="text-lg tracking-tight font-mono">
 					{stats.totalDistance}
