@@ -57,7 +57,7 @@
 		"@next/bundle-analyzer": "^16.2.1",
 		"@biomejs/biome": "2.4.15",
 		"@size-limit/preset-app": "^12.1.0",
-		"@tailwindcss/postcss": "^4.2.4",
+		"@tailwindcss/postcss": "^4.3.0",
 		"@tailwindcss/typography": "^0.5.19",
 		"@types/node": "^25.9.1",
 		"@types/react": "^19.2.14",
@@ -67,7 +67,7 @@
 		"remark-validate-links": "^13.1.0",
 		"shadcn-ui": "^0.9.5",
 		"size-limit": "^12.1.0",
-		"tailwindcss": "^4.2.4",
+		"tailwindcss": "^4.3.0",
 		"typescript": "^6.0.3"
 	}
 }
