@@ -47,15 +47,17 @@ export default async function RootLayout({
 
 	return (
 		<ViewTransitions>
-			<html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+			<html
+				lang="en"
+				className={`${geistSans.variable} ${geistMono.variable} dark`}
+			>
 				<body className="antialiased">
-					<div className="max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-3xl mx-auto px-4">
+					<div className="mt-12 md:mt-18 lg:mt-20 max-w-4xl md:max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto">
 						<Nav blogPosts={blogPosts} projects={projects} />
-						<div
-							className="pt-12 md:pt-18 lg:pt-20"
-							style={{ viewTransitionName: "page-content" }}
-						>
-							{children}
+						<div className="border">
+							<div style={{ viewTransitionName: "page-content" }}>
+								{children}
+							</div>
 						</div>
 						<Footer />
 					</div>

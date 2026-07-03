@@ -3,8 +3,8 @@ import { ExternalLinkIcon } from "./external-link-icon";
 
 export default function Footer() {
 	return (
-		<footer className="my-12">
-			<div className="flex justify-between items-center text-sm">
+		<footer className="my-10">
+			<div className="flex justify-between items-center">
 				<p>
 					<span className="opacity-75">Adrian Lam (</span>
 					<Link

@@ -237,7 +237,7 @@ export default function Nav({ blogPosts, projects }: NavProps) {
 			</div>
 			<div
 				className={cn(
-					"fixed right-0 left-0 m-8 w-32 hidden lg:inline lg:w-48 overflow-hidden transition-all duration-200 ease-out",
+					" m-8 w-32 hidden lg:inline lg:w-48 overflow-hidden transition-all duration-200 ease-out",
 					activeParentTab ? "lg:w-54" : "",
 				)}
 			>
