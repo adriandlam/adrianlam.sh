@@ -381,3 +381,42 @@ details summary::-webkit-details-marker {
         animation: none;
     }
 }
+
+/* ── Typography: widow/orphan prevention ── */
+p {
+    text-wrap: pretty;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    text-wrap: balance;
+}
+
+/* ── Shiki transformer annotations (@shikijs/transformers) ── */
+
+/* // [!code highlight] */
+code [data-line].highlighted {
+    @apply bg-accent-foreground/5 -mx-3 pl-2.5 border-l-2 border-accent-foreground;
+}
+
+/* // [!code ++] and [!code --] */
+code [data-line].diff.add {
+    @apply bg-emerald-500/15;
+}
+
+code [data-line].diff.remove {
+    @apply bg-rose-500/15 opacity-70;
+}
+
+/* // [!code focus]: dim non-focused lines until the block is hovered */
+pre.has-focused [data-line]:not(.focused) {
+    @apply opacity-40 blur-[1.5px] transition-[opacity,filter] duration-200;
+}
+
+pre.has-focused:hover [data-line]:not(.focused) {
+    @apply opacity-100 blur-none;
+}

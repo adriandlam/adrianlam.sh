@@ -1,5 +1,11 @@
+import {
+	transformerNotationDiff,
+	transformerNotationFocus,
+	transformerNotationHighlight,
+} from "@shikijs/transformers";
 import Image from "next/image";
 import Link from "next/link";
+import { rehypeAccessibleEmojis } from "rehype-accessible-emojis";
 import rehypeExternalLinks from "rehype-external-links";
 import rehypeKatex from "rehype-katex";
 import rehypePrettyCode from "rehype-pretty-code";
@@ -24,6 +30,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import { rehypeImageSize } from "@/lib/rehype-image-size";
 
 function createHeading(level: 1 | 2 | 3 | 4 | 5 | 6) {
 	// biome-ignore lint/suspicious/noExplicitAny: MDX component props are untyped
@@ -141,6 +148,11 @@ export const mdxOptions = {
 			{
 				theme: "vesper",
 				keepBackground: false,
+				transformers: [
+					transformerNotationDiff({ matchAlgorithm: "v3" }),
+					transformerNotationHighlight({ matchAlgorithm: "v3" }),
+					transformerNotationFocus({ matchAlgorithm: "v3" }),
+				],
 			},
 		],
 		[
@@ -150,6 +162,8 @@ export const mdxOptions = {
 				rel: ["noopener", "noreferrer"],
 			},
 		],
+		rehypeImageSize,
 		rehypeUnwrapImages,
+		rehypeAccessibleEmojis,
 	],
 };
