@@ -2,26 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { ExternalLinkIcon } from "@/components/external-link-icon";
 import { getFeaturedProjects } from "@/lib/projects";
+import vercelImage from "@/public/vercel.png";
+import cloudflareImage from "@/public/cloudflare.png";
 
 export default async function Home() {
 	const featuredProjects = await getFeaturedProjects();
 
 	return (
 		<main className="grid grid-cols-3 divide-y">
-			{/* Intro Section */}
-			{/*<div className="flex items-center gap-6">
-        <Image
-          src="/me.jpeg"
-          alt="Avatar"
-          width={64}
-          height={64}
-          sizes="64px"
-          className="size-16"
-          priority
-        />
-        <h1>Adrian Lam</h1>
-      </div>*/}
-
 			{/* About Me Section */}
 			<div className="p-16 grid col-span-3">
 				<div className="space-y-4">
@@ -44,7 +32,7 @@ export default async function Home() {
 							target="_blank"
 							className="link inline-flex gap-0.5"
 						>
-							Workflow DevKit
+							Workflow SDK
 							<ExternalLinkIcon />
 						</Link>
 						.
@@ -58,6 +46,21 @@ export default async function Home() {
 						.
 					</p>
 				</div>
+			</div>
+
+			<div className="col-span-3 grid grid-cols-2">
+				<Link
+					href="https://vercel.com"
+					className="hover:opacity-75 transition duration-150 ease-out"
+				>
+					<Image src={vercelImage} alt="Vercel" />
+				</Link>
+				<Link
+					href="https://www.cloudflare.com"
+					className="hover:opacity-75 transition duration-150 ease-out"
+				>
+					<Image src={cloudflareImage} alt="Cloudflare" />
+				</Link>
 			</div>
 
 			{/* Projects Section */}

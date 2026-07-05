@@ -1,6 +1,6 @@
 {
 	"featured": [
-		"vercel-workflow-devkit",
+		"vercel-workflow-sdk",
 		"mnist-digit-classifier",
 		"blocksmith",
 		"spec2mcp",

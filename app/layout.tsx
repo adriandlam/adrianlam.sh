@@ -6,6 +6,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ViewTransitions } from "next-view-transitions";
 import Footer from "@/components/footer";
 import Nav from "@/components/nav";
+import { TickNav } from "@/components/tick-nav";
 import { getBlogPostsForNav } from "@/lib/blog";
 import { SITE_URL } from "@/lib/constants";
 import { getProjectsForNav } from "@/lib/projects";
@@ -49,16 +50,14 @@ export default async function RootLayout({
 		<ViewTransitions>
 			<html
 				lang="en"
+				data-scroll-behavior="smooth"
 				className={`${geistSans.variable} ${geistMono.variable} dark`}
 			>
 				<body className="antialiased">
-					<div className="mt-12 md:mt-18 lg:mt-20 max-w-4xl md:max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto">
-						<Nav blogPosts={blogPosts} projects={projects} />
-						<div className="border">
-							<div style={{ viewTransitionName: "page-content" }}>
-								{children}
-							</div>
-						</div>
+					<div className="mt-12 max-w-4xl md:max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto">
+						<TickNav />
+						{/*<Nav blogPosts={blogPosts} projects={projects} />*/}
+						<div style={{ viewTransitionName: "page-content" }}>{children}</div>
 						<Footer />
 					</div>
 					<Analytics />

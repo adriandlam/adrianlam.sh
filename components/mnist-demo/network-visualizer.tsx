@@ -288,9 +288,10 @@ export const NetworkVisualizer = memo(function NetworkVisualizer({
 						cx={LAYER_X.output}
 						cy={y}
 						r={OUTPUT_RADIUS}
+						stroke={theme.accent}
+						strokeWidth={0}
 						animate={{
 							fill: outputColor(outputProbs[i], theme),
-							stroke: i === topIndex && hasResult ? theme.accent : "none",
 							strokeWidth: i === topIndex && hasResult ? 1.5 : 0,
 						}}
 						transition={{ duration: 0.3 }}

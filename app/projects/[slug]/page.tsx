@@ -1,19 +1,11 @@
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
-import { ExternalLinkIcon } from "@/components/external-link-icon";
 import { KatexStyles } from "@/components/katex-styles";
+import { TocTickNav } from "@/components/toc-tick-nav";
 import { SITE_URL } from "@/lib/constants";
 import { mdxComponents, mdxOptions } from "@/lib/mdx";
 import { getProject, getProjects } from "@/lib/projects";
-
-const TableOfContents = dynamic(() =>
-	import("@/components/table-of-contents").then((m) => m.TableOfContents),
-);
-
-import { TransitionLink } from "@/components/transition-link";
 import { extractHeadings } from "@/lib/toc";
 
 export async function generateMetadata({
@@ -67,39 +59,36 @@ export default async function ProjectPage({
 	const usesMath = content.includes("$") || content.includes("\\(");
 
 	return (
-		<main>
+		<main className="mt-10">
 			{usesMath && <KatexStyles />}
-			<div className="relative">
-				{headings.length >= 2 && <TableOfContents items={headings} />}
+			<div className="relative space-y-12">
+				<TocTickNav
+					items={headings}
+					backHref="/projects"
+					backLabel="Back to projects"
+				/>
 
 				{/* Project header */}
-				<div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-					<div>
-						<span className="uppercase font-mono text-accent-foreground text-xs tracking-widest">
-							Project
-						</span>
-						<h1 className="text-4xl mt-1.5">{metadata.name}</h1>
-						<p className=" text-muted-foreground mt-2">
-							{metadata.description}
-						</p>
-					</div>
-					<div className="flex flex-wrap gap-3">
-						{metadata.url && (
-							<Link
-								href={metadata.url}
-								target="_blank"
-								rel="noopener noreferrer"
-								className="link inline-flex gap-0.5"
-							>
-								View
-								<ExternalLinkIcon />
-							</Link>
-						)}
-					</div>
+				<div className="text-center">
+					<h1 className="text-5xl!">{metadata.name}</h1>
+					<p className=" text-muted-foreground mt-2">{metadata.description}</p>
+					{/*<div className="flex flex-wrap gap-3">
+            {metadata.url && (
+              <Link
+                href={metadata.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="link inline-flex gap-0.5"
+              >
+                View
+                <ExternalLinkIcon />
+              </Link>
+            )}
+          </div>*/}
 				</div>
 
 				{/* MDX content */}
-				<article>
+				<article className="max-w-3xl mx-auto">
 					<MDXRemote
 						source={content}
 						components={mdxComponents}
@@ -110,17 +99,6 @@ export default async function ProjectPage({
 					/>
 				</article>
 			</div>
-
-			{/* Back nav */}
-			<nav className="mt-16 border-t border-border pt-8">
-				<TransitionLink
-					href="/projects"
-					direction="right"
-					className="link text-sm text-muted-foreground font-mono lg:hidden"
-				>
-					← Back to projects
-				</TransitionLink>
-			</nav>
 		</main>
 	);
 }

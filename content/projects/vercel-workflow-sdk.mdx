@@ -1,0 +1,42 @@
+---
+name: "Vercel Workflow SDK"
+shortDescription: "TypeScript framework for durable execution."
+description: "Open source TypeScript framework for durable execution."
+url: "https://useworkflow.dev"
+inProgress: false
+year: 2025
+---
+
+Vercel's [Workflow SDK](https://workflow-sdk.dev) (`workflow` on npm) -- an open source TypeScript framework for durable execution.
+
+I joined as a founding member and core contributor in early September 2025.
+
+I decided that I wanted my work to be more "user-facing" and public, and so, I took up the task of creating Workflow SDK's initial documentation, as well as working with multiple core maintainers of popular frameworks to create integrations for Workflow SDK.
+
+![useworkflow.dev](/projects/vercel-workflow-sdk/preview.png)
+
+When I joined the Workflow SDK team, LAST HERE
+
+Greenfield project
+
+## Docs Were My Job
+
+Not a side project, not "someone should probably write these" — mine, specifically, from the first commit to the version that's live today.
+
+My first instinct was wrong. I assumed AI could write them — feed it the API surface, let it generate the pages, move on. It came out robotic. Technically correct, structurally fine, and completely lifeless. No one reads documentation like that; they skim it, bounce, and go ask in Discord instead. So I rewrote all of it by hand. My process is simple and slow: I read every sentence out loud before it ships, the same page a dozen different ways, listening for where I stumble. It's basically A/B testing with my own voice as the instrument. If a line trips when I say it, it trips when a stranger reads it at 2am trying to get a workflow to resume correctly. I have a critical, careful attention to detail that's probably unreasonable — but it's the only way I know how to work, and it's the kind of "human" touch an agent can't fake.
+
+## Walking In Blind
+
+Joining meant walking into a codebase with almost no internal docs of its own — scattered `.md` files, tribal knowledge, an onboarding process that mostly meant asking someone directly. I was writing the public-facing docs for a durable execution framework while reverse-engineering how the framework worked from the inside, at the same time.
+
+## The Morning of Ship AI
+
+The moment I remember most clearly. I was in a Waymo on the way to the event when something broke — the docs had gone stale against a last-minute change — and I had my laptop open in the back seat, shipping a fix mid-ride, hoping it'd land before anyone hit the page. Nobody in that room knew that happened. That's most of what building the docs was like: invisible by design, and only noticeable when it's wrong.
+
+## The Integrations
+
+...
+Alongside the docs, I built the framework integrations myself -- Bun, Astro, SvelteKit, Vite, Nuxt, Nitro, ElysiaJS, and TanStack Start -- sometimes working directly with each framework's maintainers to figure out how to integrate Workflow SDK into each framework.
+...
+
+We launched at Ship AI to 73,000+ unique visitors and 200,000+ views in the first two weeks, and the repo's since crossed 1,300 stars. I wrote up how the integrations actually work on the [Vercel blog](https://vercel.com/blog/inside-workflow-devkit-how-framework-integrations-work), if you want the technical version of this story.

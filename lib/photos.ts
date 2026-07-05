@@ -1,5 +1,6 @@
 import "server-only";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { imageSize } from "image-size";
 import { unstable_cache } from "next/cache";
 import { env } from "@/lib/env";
 
@@ -30,6 +31,24 @@ function getS3Client(): S3Client | null {
 			requestTimeout: 5000,
 		},
 	});
+}
+
+/** Read image dimensions from the file header without downloading the full image */
+async function probeDimensions(
+	url: string,
+): Promise<{ width: number; height: number } | undefined> {
+	try {
+		const response = await fetch(url, {
+			headers: { Range: "bytes=0-65535" },
+		});
+		if (!response.ok) return undefined;
+		const buffer = new Uint8Array(await response.arrayBuffer());
+		const { width, height } = imageSize(buffer);
+		if (!width || !height) return undefined;
+		return { width, height };
+	} catch {
+		return undefined;
+	}
 }
 
 /** Fetch a text object from R2 */
@@ -74,11 +93,14 @@ export const getPhotos = unstable_cache(
 				return bDate - aDate;
 			});
 
-			// Fetch blur placeholders in parallel
+			// Fetch blur placeholders and probe dimensions in parallel
 			const photos = await Promise.all(
 				entries.map(async ([hash], index) => {
 					const url = `https://photos.adriandlam.com/${hash}.webp`;
-					const blurText = await fetchTextObject(s3Client, `${hash}.blur.txt`);
+					const [blurText, dimensions] = await Promise.all([
+						fetchTextObject(s3Client, `${hash}.blur.txt`),
+						probeDimensions(url),
+					]);
 					const blurDataURL = blurText?.startsWith("data:")
 						? blurText
 						: undefined;
@@ -87,6 +109,8 @@ export const getPhotos = unstable_cache(
 						name: `Photo ${index + 1}`,
 						url,
 						blurDataURL,
+						width: dimensions?.width,
+						height: dimensions?.height,
 					};
 				}),
 			);

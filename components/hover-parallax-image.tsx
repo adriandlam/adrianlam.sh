@@ -15,6 +15,7 @@ const LIGHT_OPACITY = 0.06;
 
 type HoverParallaxImageProps = Omit<ImageProps, "fill"> & {
 	containerClassName?: string;
+	containerStyle?: React.CSSProperties;
 	disableEntrance?: boolean;
 	onClick?: () => void;
 	containerRef?: Ref<HTMLDivElement>;
@@ -23,6 +24,7 @@ type HoverParallaxImageProps = Omit<ImageProps, "fill"> & {
 
 export function HoverParallaxImage({
 	containerClassName,
+	containerStyle,
 	className,
 	width: _width,
 	height: _height,
@@ -104,7 +106,8 @@ export function HoverParallaxImage({
 			onMouseEnter={() => setIsHovered(true)}
 			onMouseLeave={handleMouseLeave}
 			onClick={onClick}
-			className={`relative overflow-hidden aspect-[3/4] ${onClick ? "cursor-pointer" : ""} ${containerClassName ?? ""}`}
+			className={`relative overflow-hidden ${onClick ? "cursor-pointer" : ""} ${containerClassName ?? ""}`}
+			style={containerStyle}
 			{...(disableEntrance
 				? {}
 				: {

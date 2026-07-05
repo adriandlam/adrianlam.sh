@@ -14,7 +14,6 @@ export function slideTransition(
 	direction: "up" | "down" | "left" | "right",
 ): () => void {
 	const slideDistance = 45;
-	const duration = 180;
 
 	const isHorizontal = direction === "left" || direction === "right";
 	const axis = isHorizontal ? "X" : "Y";
@@ -28,44 +27,45 @@ export function slideTransition(
 	const newSlide = -oldSlide;
 
 	return () => {
-		// Old content: fade out fast, slide away, blur out
+		// The CSS reduced-motion rule only covers CSS animations; WAAPI
+		// animations on the pseudo-elements must be skipped here too.
+		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+			return;
+		}
+
+		// Old content: exit fast, accelerating away with a slight blur
 		document.documentElement.animate(
 			[
 				{ opacity: 1, transform: `translate${axis}(0)`, filter: "blur(0px)" },
 				{
 					opacity: 0,
-					transform: `translate${axis}(${oldSlide * 0.5}px)`,
-					filter: "blur(3px)",
-					offset: 0.25,
-				},
-				{
-					opacity: 0,
 					transform: `translate${axis}(${oldSlide}px)`,
-					filter: "blur(3px)",
+					filter: "blur(2px)",
 				},
 			],
 			{
-				duration,
+				duration: 160,
 				easing: "cubic-bezier(0.4, 0, 1, 1)",
 				fill: "forwards",
 				pseudoElement: "::view-transition-old(page-content)",
 			},
 		);
-		// New content: slight delay so old is gone, then slide into place
+		// New content: enter once the old has mostly cleared, settling
+		// with a strong ease-out so the motion reads as one continuous pan
 		document.documentElement.animate(
 			[
-				{ opacity: 0, transform: `translate${axis}(${newSlide}px)` },
 				{
 					opacity: 0,
-					transform: `translate${axis}(${newSlide * 0.6}px)`,
-					offset: 0.2,
+					transform: `translate${axis}(${newSlide}px)`,
+					filter: "blur(2px)",
 				},
-				{ opacity: 1, transform: `translate${axis}(0)` },
+				{ opacity: 1, transform: `translate${axis}(0)`, filter: "blur(0px)" },
 			],
 			{
-				duration,
-				easing: "cubic-bezier(0, 0, 0.2, 1)",
-				fill: "forwards",
+				duration: 240,
+				delay: 60,
+				easing: "cubic-bezier(0.23, 1, 0.32, 1)",
+				fill: "both",
 				pseudoElement: "::view-transition-new(page-content)",
 			},
 		);

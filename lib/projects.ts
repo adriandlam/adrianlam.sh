@@ -13,6 +13,7 @@ export type Project = {
 	url?: string;
 	inProgress?: boolean;
 	year: number;
+	previewImage?: string;
 };
 
 export type ProjectWithContent = {
@@ -34,6 +35,19 @@ type ProjectMeta = {
 };
 
 const PROJECTS_DIR = path.join(process.cwd(), "content/projects");
+
+// Convention: public/projects/<slug>/preview.png
+function getPreviewImage(slug: string): string | undefined {
+	const previewPath = path.join(
+		process.cwd(),
+		"public/projects",
+		slug,
+		"preview.png",
+	);
+	return fs.existsSync(previewPath)
+		? `/projects/${slug}/preview.png`
+		: undefined;
+}
 
 function getProjectMeta(): ProjectMeta {
 	const metaPath = path.join(PROJECTS_DIR, "meta.json");
@@ -73,14 +87,16 @@ const getProjectsUncached = async (): Promise<Project[]> => {
 			const fileContent = fs.readFileSync(filePath, "utf8");
 			const { data } = matter(fileContent);
 			if (data.draft) return undefined;
+			const slug = filename.replace(/\.mdx$/, "");
 			return {
-				slug: filename.replace(/\.mdx$/, ""),
+				slug,
 				name: data.name,
 				description: data.description,
 				shortDescription: data.shortDescription,
 				url: data.url,
 				inProgress: data.inProgress,
 				year: data.year,
+				previewImage: getPreviewImage(slug),
 			};
 		})
 		.filter(Boolean) as Project[];

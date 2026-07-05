@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { TransitionLink } from "@/components/transition-link";
+import { Skeleton } from "@/components/ui/skeleton";
 import { type BlogPost, getBlogPosts } from "@/lib/blog";
 import { formatDateShort } from "@/lib/utils";
-import { Skeleton } from "@/components/ui/skeleton";
 
 export const metadata: Metadata = {
 	title: "Blog",
@@ -15,33 +15,35 @@ export default async function BlogPage() {
 
 	return (
 		<main className="grid grid-cols-3 divide-x">
-			<div className="p-16 sticky top-0 self-start">
-				<h1>Blog</h1>
-				<p className="mt-2 text-muted-foreground">
-					A collection of articles and thoughts on software development and who
-					I am as a person.
-				</p>
+			<div className="p-6 md:p-16">
+				<div className="md:sticky md:top-16">
+					<h1>Blog</h1>
+					<p className="mt-2 text-muted-foreground">
+						A collection of articles and thoughts on software development and
+						who I am as a person.
+					</p>
+				</div>
 			</div>
-			<div className="p-16 col-span-2 space-y-16">
+			<div className="p-6 md:col-span-2 md:space-y-1 md:p-16">
 				{posts.map((post: BlogPost) => (
 					<div
 						key={post.slug}
-						className="relative h-80 overflow-hidden hover:brightness-150 transition duration-200 ease-out"
+						className="relative h-32 overflow-hidden transition duration-200 ease-out hover:bg-accent/50"
 					>
-						<Skeleton className="h-full w-full" />
-						<div className="pointer-events-none absolute inset-x-0 bottom-0 h-3/4 bg-linear-to-t from-background to-transparent" />
 						<TransitionLink
 							href={`/blog/${post.slug}`}
 							direction="left"
 							className="absolute inset-0 z-10"
 							aria-label={`Read blog post: ${post.title}`}
 						/>
-						<div className="absolute inset-x-0 bottom-0 space-y-1 p-6">
-							<span className="block line-clamp-1 text-2xl">{post.title}</span>
-							<span className="block line-clamp-2 text-muted-foreground text-sm">
-								{post.summary}
-							</span>
-							<span className="block text-muted-foreground text-sm font-mono">
+						<div className="absolute inset-x-0 bottom-0 p-6">
+							<div className="space-y-1">
+								<span className="line-clamp-1 text-2xl">{post.title}</span>
+								<span className="line-clamp-1 text-muted-foreground text-sm">
+									{post.summary}
+								</span>
+							</div>
+							<span className="block text-muted-foreground text-xs font-mono mt-2">
 								{formatDateShort(post.publishedAt)}
 							</span>
 						</div>

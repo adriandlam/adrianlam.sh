@@ -71,7 +71,7 @@ export const mdxComponents = {
 		const imageSrc = src?.startsWith("/") ? src : `/${src}`;
 
 		return (
-			<div className="my-6">
+			<div className="my-8">
 				<Image
 					src={imageSrc}
 					alt={alt || ""}
@@ -83,14 +83,14 @@ export const mdxComponents = {
 					{...props}
 				/>
 				{alt && (
-					<p className="text-sm text-center text-muted-foreground mt-2">
+					<p className="text-sm text-center text-muted-foreground mt-3">
 						{alt}
 					</p>
 				)}
 			</div>
 		);
 	},
-	hr: () => <hr className="my-8 border-border" />,
+	hr: () => <hr className="my-12 border-border" />,
 	a: ({ children, href }: { children: React.ReactNode; href: string }) => (
 		<Link href={href} className="link inline-flex gap-0.5">
 			{children}
@@ -104,10 +104,10 @@ export const mdxComponents = {
 		<ol className="list">{children}</ol>
 	),
 	p: ({ children }: { children: React.ReactNode }) => (
-		<p className="text-foreground leading-relaxed mb-4">{children}</p>
+		<p className="text-foreground leading-relaxed mb-6">{children}</p>
 	),
 	blockquote: ({ children }: { children: React.ReactNode }) => (
-		<blockquote className="border-l-2 border-accent-foreground pl-4.5 pr-4 py-4 my-4 [&>p]:mb-0 [&>p]:text-muted-foreground [&>p]:text-[15px]">
+		<blockquote className="border-l-2 border-accent pl-4.5 pr-4 py-4 my-6 [&>p]:mb-0 [&>p]:text-card-foreground [&>p]:text-[15px] bg-card">
 			{children}
 		</blockquote>
 	),

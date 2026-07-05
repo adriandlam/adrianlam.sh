@@ -1,19 +1,12 @@
-import { ChevronLeft } from "lucide-react";
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import { TocTickNav } from "@/components/toc-tick-nav";
 import { KatexStyles } from "@/components/katex-styles";
+import { Badge } from "@/components/ui/badge";
 import { getBlogPost, getBlogPosts } from "@/lib/blog";
 import { SITE_URL } from "@/lib/constants";
-
-const TableOfContents = dynamic(() =>
-	import("@/components/table-of-contents").then((m) => m.TableOfContents),
-);
-
-import { TransitionLink } from "@/components/transition-link";
-import { Badge } from "@/components/ui/badge";
 import { mdxComponents, mdxOptions } from "@/lib/mdx";
 import { extractHeadings } from "@/lib/toc";
 import { formatDateLong } from "@/lib/utils";
@@ -94,16 +87,16 @@ export default async function Page({
 	const usesMath = content.includes("$") || content.includes("\\(");
 
 	return (
-		<main>
+		<main className="mt-16">
 			{usesMath && <KatexStyles />}
 			<div className="relative">
-				{headings.length >= 2 && <TableOfContents items={headings} />}
-				{/* Main article with right margin on large screens */}
-				<article>
-					<header className="mb-12">
-						<span className="uppercase font-mono text-accent-foreground text-xs tracking-widest">
-							Blog
-						</span>
+				<TocTickNav
+					items={headings}
+					backHref="/blog"
+					backLabel="Back to blogs"
+				/>
+				<article className="space-y-12">
+					<header className="text-center">
 						{metadata.coverImage && (
 							<div className="mb-6">
 								<Image
@@ -117,13 +110,15 @@ export default async function Page({
 								/>
 							</div>
 						)}
-						<h1 className="mt-1.5 mb-2">{metadata.title}</h1>
+						<h1 className="text-5xl! leading-[1.1] text-balance mb-3">
+							{metadata.title}
+						</h1>
 						{metadata.excerpt && (
-							<p className="text-xl text-muted-foreground mb-4">
+							<p className="text-xl text-muted-foreground mb-2">
 								{metadata.excerpt}
 							</p>
 						)}
-						<div className="flex items-center text-muted-foreground text-sm mt-2 gap-2">
+						<div className="flex items-center text-muted-foreground text-sm mt-2 gap-2 w-full justify-center">
 							<time dateTime={metadata.publishedAt} className="font-mono">
 								{formattedDate}
 							</time>
@@ -138,27 +133,17 @@ export default async function Page({
 							</div>
 						)}
 					</header>
-					<MDXRemote
-						source={content}
-						components={mdxComponents}
-						options={{
-							// biome-ignore lint/suspicious/noExplicitAny: remark/rehype plugin types don't match next-mdx-remote's expected types
-							mdxOptions: mdxOptions as any,
-						}}
-					/>
+					<div className="max-w-2xl mx-auto">
+						<MDXRemote
+							source={content}
+							components={mdxComponents}
+							options={{
+								// biome-ignore lint/suspicious/noExplicitAny: remark/rehype plugin types don't match next-mdx-remote's expected types
+								mdxOptions: mdxOptions as any,
+							}}
+						/>
+					</div>
 				</article>
-
-				{/* Post navigation */}
-				<nav className="mt-16 border-t border-border pt-8 inline-block lg:hidden">
-					{/* Back to blog — mobile only */}
-					<TransitionLink
-						href="/blog"
-						direction="right"
-						className="link text-sm text-muted-foreground font-mono mb-8"
-					>
-						<ChevronLeft /> Back to blog
-					</TransitionLink>
-				</nav>
 			</div>
 		</main>
 	);
