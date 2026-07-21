@@ -22,15 +22,21 @@ jobs:
           ref: ${{ github.head_ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - uses: pnpm/action-setup@v6
+        with:
+          cache: true
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Biome migrate + fix
         run: |
-          bunx biome migrate --write
-          bunx biome check --write .
+          pnpm exec biome migrate --write
+          pnpm exec biome check --write .
 
       - name: Commit fixes
         uses: stefanzweifel/git-auto-commit-action@v7

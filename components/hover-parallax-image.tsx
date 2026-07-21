@@ -17,8 +17,8 @@ type HoverParallaxImageProps = Omit<ImageProps, "fill"> & {
 	containerClassName?: string;
 	containerStyle?: React.CSSProperties;
 	disableEntrance?: boolean;
-	onClick?: () => void;
-	containerRef?: Ref<HTMLDivElement>;
+	onClick: () => void;
+	containerRef?: Ref<HTMLButtonElement>;
 	isActive?: boolean;
 };
 
@@ -35,7 +35,7 @@ export function HoverParallaxImage({
 	isActive,
 	...imageProps
 }: HoverParallaxImageProps) {
-	const internalRef = useRef<HTMLDivElement>(null);
+	const internalRef = useRef<HTMLButtonElement>(null);
 	const prefersReducedMotion = useReducedMotion();
 	const [isHovered, setIsHovered] = useState(false);
 	const [lightPos, setLightPos] = useState({ x: 50, y: 50 });
@@ -55,7 +55,7 @@ export function HoverParallaxImage({
 	}, [isActive, x, y]);
 
 	const handleMouseMove = useCallback(
-		(e: React.MouseEvent<HTMLDivElement>) => {
+		(e: React.MouseEvent<HTMLButtonElement>) => {
 			if (isActive) return;
 
 			const container = internalRef.current;
@@ -86,29 +86,33 @@ export function HoverParallaxImage({
 
 	// Merge internal ref with external ref
 	const setRefs = useCallback(
-		(node: HTMLDivElement | null) => {
-			(internalRef as React.MutableRefObject<HTMLDivElement | null>).current =
-				node;
+		(node: HTMLButtonElement | null) => {
+			(
+				internalRef as React.MutableRefObject<HTMLButtonElement | null>
+			).current = node;
 			if (typeof externalRef === "function") {
 				externalRef(node);
 			} else if (externalRef) {
-				(externalRef as React.MutableRefObject<HTMLDivElement | null>).current =
-					node;
+				(
+					externalRef as React.MutableRefObject<HTMLButtonElement | null>
+				).current = node;
 			}
 		},
 		[externalRef],
 	);
 
 	return (
-		<motion.div
+		<motion.button
+			type="button"
 			ref={setRefs}
+			aria-label={`Open ${imageProps.alt}`}
 			onMouseMove={handleMouseMove}
 			onMouseEnter={() => setIsHovered(true)}
 			onMouseLeave={handleMouseLeave}
 			onClick={onClick}
-			className={`relative overflow-hidden ${onClick ? "cursor-pointer" : ""} ${containerClassName ?? ""}`}
+			className={`relative block w-full overflow-hidden border-0 bg-transparent p-0 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${containerClassName ?? ""}`}
 			style={containerStyle}
-			{...(disableEntrance
+			{...(disableEntrance || prefersReducedMotion
 				? {}
 				: {
 						initial: { opacity: 0, y: 20 },
@@ -118,7 +122,7 @@ export function HoverParallaxImage({
 					})}
 		>
 			<motion.div
-				className={`absolute will-change-transform transition-[inset] ${isActive ? "duration-200 ease-out inset-0" : "duration-500 delay-300 ease-in-out inset-[-4%]"}`}
+				className={`absolute will-change-transform transition-[inset] ${prefersReducedMotion ? "duration-0" : isActive ? "duration-200 ease-out" : "duration-500 delay-300 ease-in-out"} ${isActive ? "inset-0" : "inset-[-4%]"}`}
 				style={{
 					x: springX,
 					y: springY,
@@ -133,12 +137,12 @@ export function HoverParallaxImage({
 
 			{/* Spotlight overlay */}
 			<div
-				className="pointer-events-none absolute inset-0 transition-opacity duration-300"
+				className={`pointer-events-none absolute inset-0 transition-opacity ${prefersReducedMotion ? "duration-0" : "duration-300"}`}
 				style={{
 					opacity: isHovered ? 1 : 0,
 					background: `radial-gradient(circle 100px at ${lightPos.x}% ${lightPos.y}%, rgba(255,255,255,${LIGHT_OPACITY}), transparent)`,
 				}}
 			/>
-		</motion.div>
+		</motion.button>
 	);
 }

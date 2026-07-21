@@ -15,13 +15,14 @@ function LightboxImage({
 	sizes: string;
 }) {
 	const [loaded, setLoaded] = useState(false);
+	const prefersReducedMotion = useReducedMotion();
 
 	return (
 		<Image
 			src={src}
 			alt={alt}
 			fill
-			className={`object-contain transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`}
+			className={`object-contain transition-opacity ${prefersReducedMotion ? "duration-0" : "duration-300"} ${loaded ? "opacity-100" : "opacity-0"}`}
 			sizes={sizes}
 			priority
 			onLoad={() => setLoaded(true)}
@@ -103,6 +104,9 @@ export function PhotoLightbox({
 	const [isClosing, setIsClosing] = useState(false);
 	const [direction, setDirection] = useState<"left" | "right">("left");
 	const prefersReducedMotion = useReducedMotion();
+	const dialogRef = useRef<HTMLDialogElement>(null);
+	const closeButtonRef = useRef<HTMLButtonElement>(null);
+	const previouslyFocusedRef = useRef<HTMLElement | null>(null);
 	const touchStartX = useRef(0);
 	const touchDeltaX = useRef(0);
 
@@ -121,20 +125,42 @@ export function PhotoLightbox({
 	}, [photos.length]);
 
 	const handleClose = useCallback(() => {
+		if (isClosing) return;
+		if (prefersReducedMotion) {
+			onClose();
+			return;
+		}
 		setIsClosing(true);
 		setTimeout(onClose, 350);
-	}, [onClose]);
+	}, [isClosing, onClose, prefersReducedMotion]);
+
+	// Native modal dialogs contain focus and make the background inert.
+	useEffect(() => {
+		const dialog = dialogRef.current;
+		if (!dialog) return;
+
+		previouslyFocusedRef.current =
+			document.activeElement instanceof HTMLElement
+				? document.activeElement
+				: null;
+		if (!dialog.open) dialog.showModal();
+		closeButtonRef.current?.focus();
+
+		return () => {
+			if (dialog.open) dialog.close();
+			previouslyFocusedRef.current?.focus();
+		};
+	}, []);
 
 	// Keyboard navigation
 	useEffect(() => {
 		function handleKeyDown(e: KeyboardEvent) {
-			if (e.key === "Escape") handleClose();
 			if (e.key === "ArrowLeft") goToPrev();
 			if (e.key === "ArrowRight") goToNext();
 		}
 		window.addEventListener("keydown", handleKeyDown);
 		return () => window.removeEventListener("keydown", handleKeyDown);
-	}, [handleClose, goToPrev, goToNext]);
+	}, [goToPrev, goToNext]);
 
 	// Body scroll lock
 	useEffect(() => {
@@ -203,13 +229,22 @@ export function PhotoLightbox({
 	const closingOpacity = isClosing && hasNavigated ? 0 : 1;
 
 	return (
-		<>
+		<dialog
+			ref={dialogRef}
+			aria-modal="true"
+			aria-label={`Photo viewer: ${photo.name}`}
+			className="fixed inset-0 z-50 m-0 h-dvh max-h-none w-screen max-w-none overflow-hidden overscroll-contain border-0 bg-transparent p-0 text-foreground backdrop:bg-transparent"
+			onCancel={(event) => {
+				event.preventDefault();
+				handleClose();
+			}}
+		>
 			{/* Backdrop */}
 			<motion.div
 				className="fixed inset-0 z-50 bg-background/95 backdrop-blur"
-				initial={{ opacity: 0 }}
+				initial={prefersReducedMotion ? false : { opacity: 0 }}
 				animate={{ opacity: isClosing ? 0 : 1 }}
-				transition={{ duration: 0.25 }}
+				transition={{ duration: prefersReducedMotion ? 0 : 0.25 }}
 				onClick={handleClose}
 				onTouchStart={handleTouchStart}
 				onTouchMove={handleTouchMove}
@@ -219,15 +254,16 @@ export function PhotoLightbox({
 			{/* UI controls */}
 			<motion.div
 				className="fixed inset-0 z-50 pointer-events-none"
-				initial={{ opacity: 0 }}
+				initial={prefersReducedMotion ? false : { opacity: 0 }}
 				animate={{ opacity: isClosing ? 0 : 1 }}
-				transition={{ duration: 0.2 }}
+				transition={{ duration: prefersReducedMotion ? 0 : 0.2 }}
 			>
 				{/* Close button */}
 				<button
+					ref={closeButtonRef}
 					type="button"
 					onClick={handleClose}
-					className="pointer-events-auto absolute top-4 right-4 z-10 text-white/70 hover:text-white transition-colors p-2"
+					className="pointer-events-auto absolute top-4 right-4 z-10 text-white/70 hover:text-white transition-colors p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
 					aria-label="Close lightbox"
 				>
 					<svg
@@ -255,7 +291,7 @@ export function PhotoLightbox({
 							e.stopPropagation();
 							goToPrev();
 						}}
-						className="pointer-events-auto absolute left-4 top-1/2 -translate-y-1/2 z-10 text-white/70 hover:text-white transition-colors p-2 hidden sm:block"
+						className="pointer-events-auto absolute left-4 top-1/2 -translate-y-1/2 z-10 text-white/70 hover:text-white transition-colors p-2 hidden sm:block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
 						aria-label="Previous photo"
 					>
 						<svg
@@ -283,7 +319,7 @@ export function PhotoLightbox({
 							e.stopPropagation();
 							goToNext();
 						}}
-						className="pointer-events-auto absolute right-4 top-1/2 -translate-y-1/2 z-10 text-white/70 hover:text-white transition-colors p-2 hidden sm:block"
+						className="pointer-events-auto absolute right-4 top-1/2 -translate-y-1/2 z-10 text-white/70 hover:text-white transition-colors p-2 hidden sm:block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
 						aria-label="Next photo"
 					>
 						<svg
@@ -320,12 +356,10 @@ export function PhotoLightbox({
 						? { opacity: closingOpacity }
 						: { ...animateTarget, opacity: closingOpacity }
 				}
-				transition={
-					prefersReducedMotion ? { duration: 0.2 } : SPRING_TRANSITION
-				}
+				transition={prefersReducedMotion ? { duration: 0 } : SPRING_TRANSITION}
 			>
-				{/* biome-ignore lint/a11y/noStaticElementInteractions: acts as backdrop close area, keyboard handled by global Escape listener */}
-				{/* biome-ignore lint/a11y/useKeyWithClickEvents: keyboard handled by global Escape listener */}
+				{/* biome-ignore lint/a11y/noStaticElementInteractions: close button and native dialog Escape handling provide keyboard access */}
+				{/* biome-ignore lint/a11y/useKeyWithClickEvents: close button and native dialog Escape handling provide keyboard access */}
 				<div
 					className="relative w-full h-full pointer-events-auto flex items-center justify-center"
 					onClick={(e) => {
@@ -339,10 +373,12 @@ export function PhotoLightbox({
 							custom={direction}
 							variants={slideVariants}
 							className="absolute inset-0"
-							initial={hasNavigated ? "enter" : false}
+							initial={hasNavigated && !prefersReducedMotion ? "enter" : false}
 							animate="center"
-							exit="exit"
-							transition={SLIDE_TRANSITION}
+							exit={prefersReducedMotion ? undefined : "exit"}
+							transition={
+								prefersReducedMotion ? { duration: 0 } : SLIDE_TRANSITION
+							}
 						>
 							{/* Grid-quality image — cached, shows instantly */}
 							<Image
@@ -363,6 +399,6 @@ export function PhotoLightbox({
 					</AnimatePresence>
 				</div>
 			</motion.div>
-		</>
+		</dialog>
 	);
 }

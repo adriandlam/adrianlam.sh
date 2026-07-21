@@ -54,7 +54,9 @@ export function TocTickNav({
 	const router = useTransitionRouter();
 	const shouldReduceMotion = useReducedMotion();
 	const [hovered, setHovered] = useState<number | null>(null);
+	const [focused, setFocused] = useState<number | null>(null);
 	const [backHovered, setBackHovered] = useState(false);
+	const [backFocused, setBackFocused] = useState(false);
 	const [activeId, setActiveId] = useState("");
 
 	useEffect(() => {
@@ -87,7 +89,9 @@ export function TocTickNav({
 	}, [items]);
 
 	const activeIndex = items.findIndex((item) => item.id === activeId);
-	const focusIndex = hovered ?? (activeIndex === -1 ? null : activeIndex);
+	const highlightedIndex = hovered ?? focused;
+	const focusIndex =
+		highlightedIndex ?? (activeIndex === -1 ? null : activeIndex);
 
 	return (
 		<nav
@@ -100,9 +104,12 @@ export function TocTickNav({
 		>
 			<Link
 				href={backHref}
-				className="group relative flex w-fit items-center py-1.5 pr-4 mb-1 text-muted-foreground transition-colors duration-200 ease-out hover:text-primary"
+				aria-label={backLabel}
+				className="group relative flex w-fit items-center py-1.5 pr-4 mb-1 rounded-sm text-muted-foreground transition-colors duration-200 ease-out hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 				onMouseEnter={() => setBackHovered(true)}
 				onMouseLeave={() => setBackHovered(false)}
+				onFocus={() => setBackFocused(true)}
+				onBlur={() => setBackFocused(false)}
 				onClick={(event) => {
 					if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
 						return;
@@ -112,9 +119,9 @@ export function TocTickNav({
 					});
 				}}
 			>
-				<Undo2 className="size-4" />
+				<Undo2 className="size-4" aria-hidden="true" />
 				<AnimatePresence>
-					{backHovered && (
+					{(backHovered || backFocused) && (
 						<TickTooltip shouldReduceMotion={shouldReduceMotion}>
 							<p className="font-medium">{backLabel}</p>
 						</TickTooltip>
@@ -126,22 +133,25 @@ export function TocTickNav({
 				const isActive = i === activeIndex;
 				const isNested = item.level === 3;
 				const width =
-					hovered === null
+					highlightedIndex === null
 						? isNested
 							? NESTED_REST_WIDTH
 							: REST_WIDTH
 						: TICK_WIDTHS[
-								Math.min(Math.abs(i - hovered), TICK_WIDTHS.length - 1)
+								Math.min(Math.abs(i - highlightedIndex), TICK_WIDTHS.length - 1)
 							] - (isNested ? 6 : 0);
 
 				return (
 					<a
 						key={item.id}
 						href={`#${item.id}`}
+						aria-label={item.text}
 						aria-current={isActive ? "location" : undefined}
-						className="group relative flex items-center py-1.5 pr-4 cursor-default"
+						className="group relative flex items-center py-1.5 pr-4 cursor-default rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 						style={{ marginLeft: isNested ? NESTED_INDENT : 0 }}
 						onMouseEnter={() => setHovered(i)}
+						onFocus={() => setFocused(i)}
+						onBlur={() => setFocused(null)}
 					>
 						<div
 							className={cn(
@@ -155,7 +165,7 @@ export function TocTickNav({
 							style={{ width }}
 						/>
 						<AnimatePresence>
-							{hovered === i && (
+							{highlightedIndex === i && (
 								<TickTooltip shouldReduceMotion={shouldReduceMotion}>
 									<p className="font-medium">{item.text}</p>
 								</TickTooltip>

@@ -54,10 +54,22 @@ export default async function RootLayout({
 				className={`${geistSans.variable} ${geistMono.variable} dark`}
 			>
 				<body className="antialiased">
+					<a
+						href="#main-content"
+						className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:border focus:bg-background focus:px-4 focus:py-2 focus:text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+					>
+						Skip to main content
+					</a>
 					<div className="mt-12 max-w-4xl md:max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto">
 						<TickNav />
 						{/*<Nav blogPosts={blogPosts} projects={projects} />*/}
-						<div style={{ viewTransitionName: "page-content" }}>{children}</div>
+						<div
+							id="main-content"
+							tabIndex={-1}
+							style={{ viewTransitionName: "page-content" }}
+						>
+							{children}
+						</div>
 						<Footer />
 					</div>
 					<Analytics />

@@ -12,8 +12,8 @@ My personal site. Blog, projects, photos.
  ## Running locally
 
 ```bash
-bun install
-bun dev
+pnpm install
+pnpm dev
 ```
 
 ## Content

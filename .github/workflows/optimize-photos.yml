@@ -26,10 +26,16 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - uses: pnpm/action-setup@v6
+        with:
+          cache: true
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Run optimization
         env:
@@ -39,11 +45,11 @@ jobs:
         run: |
           MODE="${{ inputs.mode || 'default' }}"
           if [ "$MODE" = "clean" ]; then
-            bun run scripts/optimize-photos.ts --clean
+            node scripts/optimize-photos.ts --clean
           elif [ "$MODE" = "force" ]; then
-            bun run scripts/optimize-photos.ts --force
+            node scripts/optimize-photos.ts --force
           else
-            bun run scripts/optimize-photos.ts
+            node scripts/optimize-photos.ts
           fi
 
       - name: Purge Cloudflare Cache

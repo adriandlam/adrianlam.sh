@@ -24,6 +24,7 @@ export function TickNav() {
 	const router = useTransitionRouter();
 	const shouldReduceMotion = useReducedMotion();
 	const [hovered, setHovered] = useState<number | null>(null);
+	const [focused, setFocused] = useState<number | null>(null);
 
 	// Blog posts and project pages render their own heading ticks (TocTickNav)
 	const isDetailPage = /^\/(blog|projects)\/./.test(pathname);
@@ -31,7 +32,9 @@ export function TickNav() {
 	const activeIndex = items.findIndex((item) =>
 		item.href === "/" ? pathname === "/" : pathname.startsWith(item.href),
 	);
-	const focusIndex = hovered ?? (activeIndex === -1 ? null : activeIndex);
+	const highlightedIndex = hovered ?? focused;
+	const focusIndex =
+		highlightedIndex ?? (activeIndex === -1 ? null : activeIndex);
 
 	const navigate = useCallback(
 		(to: number) => {
@@ -74,19 +77,22 @@ export function TickNav() {
 				const isFocused = i === focusIndex;
 				const isActive = i === activeIndex;
 				const width =
-					hovered === null
+					highlightedIndex === null
 						? REST_WIDTH
 						: TICK_WIDTHS[
-								Math.min(Math.abs(i - hovered), TICK_WIDTHS.length - 1)
+								Math.min(Math.abs(i - highlightedIndex), TICK_WIDTHS.length - 1)
 							];
 
 				return (
 					<Link
 						key={item.href}
 						href={item.href}
+						aria-label={item.name}
 						aria-current={isActive ? "page" : undefined}
-						className="group relative flex items-center py-1.5 pr-4 cursor-default"
+						className="group relative flex items-center py-1.5 pr-4 cursor-default rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 						onMouseEnter={() => setHovered(i)}
+						onFocus={() => setFocused(i)}
+						onBlur={() => setFocused(null)}
 						onClick={(event) => {
 							if (
 								event.metaKey ||
@@ -111,7 +117,7 @@ export function TickNav() {
 							style={{ width }}
 						/>
 						<AnimatePresence>
-							{hovered === i && (
+							{highlightedIndex === i && (
 								<motion.div
 									className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 whitespace-nowrap bg-card px-1.5 py-1 border rounded-md text-sm"
 									initial={{

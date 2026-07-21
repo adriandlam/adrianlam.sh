@@ -30,10 +30,10 @@ interface LightboxState {
 
 export function PhotoGrid({ photos }: PhotoGridProps) {
 	const [lightbox, setLightbox] = useState<LightboxState | null>(null);
-	const itemRefs = useRef<Map<number, HTMLDivElement>>(new Map());
+	const itemRefs = useRef<Map<number, HTMLButtonElement>>(new Map());
 
 	const setItemRef = useCallback(
-		(index: number) => (node: HTMLDivElement | null) => {
+		(index: number) => (node: HTMLButtonElement | null) => {
 			if (node) {
 				itemRefs.current.set(index, node);
 			} else {
@@ -61,7 +61,7 @@ export function PhotoGrid({ photos }: PhotoGridProps) {
 
 	return (
 		<>
-			<div className="p-16 col-span-2 grid grid-cols-2 md:grid-cols-3 grid-flow-dense gap-4">
+			<div className="p-6 md:col-span-2 md:p-16 grid grid-cols-2 md:grid-cols-3 grid-flow-dense gap-4">
 				{photos.map((photo, i) => {
 					const ratio =
 						photo.width && photo.height ? photo.width / photo.height : 3 / 4;

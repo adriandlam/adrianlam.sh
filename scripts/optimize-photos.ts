@@ -10,9 +10,9 @@
  * have already been processed. Safe to run multiple times.
  *
  * Usage:
- *   bun run scripts/optimize-photos.ts           # process new photos only
- *   bun run scripts/optimize-photos.ts --force    # re-process all photos
- *   bun run scripts/optimize-photos.ts --clean    # wipe target bucket + re-process all
+ *   node scripts/optimize-photos.ts           # process new photos only
+ *   node scripts/optimize-photos.ts --force    # re-process all photos
+ *   node scripts/optimize-photos.ts --clean    # wipe target bucket + re-process all
  */
 
 import { createHash } from "node:crypto";
