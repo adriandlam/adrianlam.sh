@@ -33,6 +33,8 @@ jobs:
           urls: |
             ${{ steps.vercel.outputs.url }}
             ${{ steps.vercel.outputs.url }}/blog
+            ${{ steps.vercel.outputs.url }}/projects
+            ${{ steps.vercel.outputs.url }}/photos
           configPath: ./lighthouserc.json
           uploadArtifacts: true
           temporaryPublicStorage: true
