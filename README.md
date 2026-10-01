@@ -29,6 +29,7 @@ Required for the photos page:
 CLOUDFLARE_ACCOUNT_ID=
 CLOUDFLARE_R2_ACCESS_KEY_ID=
 CLOUDFLARE_R2_SECRET_ACCESS_KEY=
+REVALIDATE_SECRET=
 ```
 
 Optional (defaults to `https://adriandlam.com`):
