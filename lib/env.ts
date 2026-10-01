@@ -6,6 +6,9 @@ const envSchema = z.object({
 	CLOUDFLARE_R2_ACCESS_KEY_ID: z.string().min(1).optional(),
 	CLOUDFLARE_R2_SECRET_ACCESS_KEY: z.string().min(1).optional(),
 
+	// Shared with the optimize-photos workflow to trigger /api/revalidate
+	REVALIDATE_SECRET: z.string().min(1).optional(),
+
 	// Automatically set by Vercel — optional for local dev and CI
 	VERCEL_PROJECT_PRODUCTION_URL: z.string().optional(),
 });
