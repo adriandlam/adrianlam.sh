@@ -34,6 +34,9 @@ jobs:
       - name: Biome check (lint + format)
         run: bunx biome check .
 
+      - name: Knip (unused files, deps, exports)
+        run: bun run knip
+
       - name: TypeScript typecheck
         run: bunx tsc --noEmit
 
