@@ -64,9 +64,12 @@ jobs:
       - name: Revalidate Photos Page
         if: success()
         run: |
-          http_code=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+          http_code=$(curl -s -D headers.txt -o body.txt -w "%{http_code}" -X POST \
             "https://www.adrianlam.sh/api/revalidate" \
             -H "Authorization: Bearer ${{ secrets.REVALIDATE_SECRET }}")
           if [ "$http_code" -ne 200 ]; then
             echo "::warning::Revalidation failed with status $http_code"
+            # Shows whether Cloudflare or Vercel's firewall blocked the request
+            grep -iE '^(server|cf-|x-vercel)' headers.txt || true
+            head -c 500 body.txt
           fi
