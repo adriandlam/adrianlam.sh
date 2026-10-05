@@ -6,13 +6,13 @@
  * placeholders, and uploads to the "photos-optimized" bucket
  * with hashed filenames for clean public URLs.
  *
- * Idempotent: reads _manifest.json to determine which photos
- * have already been processed. Safe to run multiple times.
+ * Syncs the target bucket to the source: processes photos missing
+ * from _manifest.json and removes ones deleted from the source.
+ * Safe to run multiple times.
  *
  * Usage:
- *   bun run scripts/optimize-photos.ts           # process new photos only
- *   bun run scripts/optimize-photos.ts --force    # re-process all photos
- *   bun run scripts/optimize-photos.ts --clean    # wipe target bucket + re-process all
+ *   bun run scripts/optimize-photos.ts           # sync new + deleted photos
+ *   bun run scripts/optimize-photos.ts --force    # also re-process all photos
  */
 
 import { createHash } from "node:crypto";
@@ -219,26 +219,11 @@ function formatBytes(bytes: number): string {
 // ---------------------------------------------------------------------------
 
 async function main() {
-	const cleanMode = process.argv.includes("--clean");
-	const forceMode = process.argv.includes("--force") || cleanMode;
+	const forceMode = process.argv.includes("--force");
 	const startTime = Date.now();
 
 	console.log("Photo Optimization Pipeline");
 	console.log("===========================\n");
-
-	// 0. Clean target bucket if requested
-	if (cleanMode) {
-		console.log("Clean mode: wiping target bucket...");
-		const targetKeys = await listBucketKeys(TARGET_BUCKET);
-		if (targetKeys.length > 0) {
-			for (const key of targetKeys) {
-				await deleteObject(TARGET_BUCKET, key);
-			}
-			console.log(`  Deleted ${targetKeys.length} objects\n`);
-		} else {
-			console.log("  Bucket already empty\n");
-		}
-	}
 
 	// 1. List source bucket
 	console.log(`Listing source bucket: ${SOURCE_BUCKET}`);
@@ -264,13 +249,26 @@ async function main() {
 		}
 	}
 
-	// 3. Download existing manifest (or start fresh if clean mode)
-	const manifest: Manifest = cleanMode ? {} : await downloadManifest();
+	// 3. Download existing manifest
+	const manifest = await downloadManifest();
 	const processedOriginals = new Set(
 		Object.values(manifest).map((e) => e.original),
 	);
 
 	console.log(`Existing manifest: ${Object.keys(manifest).length} entries\n`);
+
+	// Remove photos deleted from the source bucket
+	const sourceSet = new Set(imageKeys);
+	const stale = Object.entries(manifest).filter(
+		([, entry]) => !sourceSet.has(entry.original),
+	);
+	for (const [hash, entry] of stale) {
+		console.log(`Removing ${entry.original} → ${hash}`);
+		await deleteObject(TARGET_BUCKET, `${hash}.webp`);
+		await deleteObject(TARGET_BUCKET, `${hash}.blur.txt`);
+		delete manifest[hash];
+	}
+	if (stale.length > 0) console.log();
 
 	// 4. Determine which photos to process
 	const toProcess = forceMode
@@ -278,6 +276,7 @@ async function main() {
 		: imageKeys.filter((key) => !processedOriginals.has(key));
 
 	if (toProcess.length === 0) {
+		if (stale.length > 0) await uploadManifest(manifest);
 		console.log("No new photos to process. Everything is up to date.");
 		return;
 	}
@@ -387,6 +386,7 @@ async function main() {
 	console.log("Summary");
 	console.log("===========================");
 	console.log(`Processed:  ${successCount} photos`);
+	if (stale.length > 0) console.log(`Removed:    ${stale.length} photos`);
 	if (failCount > 0) console.log(`Failed:     ${failCount} photos`);
 	console.log(`Original:   ${formatBytes(totalOriginalSize)}`);
 	console.log(`Optimized:  ${formatBytes(totalOptimizedSize)}`);
@@ -401,6 +401,7 @@ async function main() {
 			"| Metric | Value |",
 			"| --- | --- |",
 			`| Photos processed | ${successCount} |`,
+			stale.length > 0 ? `| Photos removed | ${stale.length} |` : "",
 			failCount > 0 ? `| Failed | ${failCount} |` : "",
 			`| Original size | ${formatBytes(totalOriginalSize)} |`,
 			`| Optimized size | ${formatBytes(totalOptimizedSize)} |`,

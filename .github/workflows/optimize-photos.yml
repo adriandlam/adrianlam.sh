@@ -11,7 +11,6 @@ on:
         options:
           - default
           - force
-          - clean
   schedule:
     - cron: "0 */6 * * *" # Every 6 hours
 
@@ -38,9 +37,7 @@ jobs:
           CLOUDFLARE_R2_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_R2_SECRET_ACCESS_KEY }}
         run: |
           MODE="${{ inputs.mode || 'default' }}"
-          if [ "$MODE" = "clean" ]; then
-            bun run scripts/optimize-photos.ts --clean
-          elif [ "$MODE" = "force" ]; then
+          if [ "$MODE" = "force" ]; then
             bun run scripts/optimize-photos.ts --force
           else
             bun run scripts/optimize-photos.ts
