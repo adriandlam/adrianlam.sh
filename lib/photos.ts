@@ -126,6 +126,8 @@ const getPhotosCached = unstable_cache(
 );
 
 export async function getPhotos() {
+	// No R2 credentials (CI, local dev without photos) is expected, not an error
+	if (!getS3Client()) return [];
 	try {
 		return await getPhotosCached();
 	} catch (error) {
