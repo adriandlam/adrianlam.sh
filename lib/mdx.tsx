@@ -91,8 +91,12 @@ export const mdxComponents = {
 		);
 	},
 	hr: () => <hr className="my-12 border-border" />,
-	a: ({ children, href }: { children: React.ReactNode; href: string }) => (
-		<Link href={href} className="link inline-flex gap-0.5">
+	a: ({
+		children,
+		href,
+		...props
+	}: React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }) => (
+		<Link href={href} className="link inline-flex gap-0.5" {...props}>
 			{children}
 			{!(href.startsWith("/") || href.startsWith("#")) && <ExternalLinkIcon />}
 		</Link>

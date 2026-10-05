@@ -61,7 +61,7 @@ export function PhotoGrid({ photos }: PhotoGridProps) {
 
 	return (
 		<>
-			<div className="p-6 md:col-span-2 md:p-16 grid grid-cols-2 md:grid-cols-3 grid-flow-dense gap-4">
+			<div className="py-6 md:col-span-2 md:p-16 grid grid-cols-2 md:grid-cols-3 grid-flow-dense gap-4">
 				{photos.map((photo, i) => {
 					const ratio =
 						photo.width && photo.height ? photo.width / photo.height : 3 / 4;

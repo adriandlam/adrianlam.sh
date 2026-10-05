@@ -110,45 +110,6 @@ export const getProjects = unstable_cache(getProjectsUncached, ["projects"], {
 	tags: ["projects"],
 });
 
-// Lightweight function for navbar
-export type NavProject = {
-	slug: string;
-	name: string;
-	year: number;
-};
-
-const getProjectsForNavUncached = async (): Promise<NavProject[]> => {
-	const filenames = fs.readdirSync(PROJECTS_DIR);
-	const meta = getProjectMeta();
-
-	const projects = filenames
-		.filter((filename) => filename.endsWith(".mdx"))
-		.map((filename) => {
-			const filePath = path.join(PROJECTS_DIR, filename);
-			const fileContent = fs.readFileSync(filePath, "utf8");
-			const { data } = matter(fileContent);
-			if (data.draft) return undefined;
-			return {
-				slug: filename.replace(/\.mdx$/, ""),
-				name: data.name as string,
-				year: data.year as number,
-			};
-		})
-		.filter(Boolean) as NavProject[];
-
-	const effectiveOrder = meta.order ?? [...meta.featured, "*"];
-	return applyOrdering(projects, effectiveOrder);
-};
-
-export const getProjectsForNav = unstable_cache(
-	getProjectsForNavUncached,
-	["projects-for-nav"],
-	{
-		revalidate: false,
-		tags: ["projects"],
-	},
-);
-
 // Get featured projects in the order specified by meta.json
 const getFeaturedProjectsUncached = async (): Promise<Project[]> => {
 	const allProjects = await getProjectsUncached();

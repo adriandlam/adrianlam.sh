@@ -59,9 +59,9 @@ export default async function ProjectPage({
 	const usesMath = content.includes("$") || content.includes("\\(");
 
 	return (
-		<main className="mt-10">
+		<main className="pt-6 md:pt-16">
 			{usesMath && <KatexStyles />}
-			<div className="relative space-y-12">
+			<div className="mx-auto max-w-xl space-y-12">
 				<TocTickNav
 					items={headings}
 					backHref="/projects"
@@ -69,9 +69,9 @@ export default async function ProjectPage({
 				/>
 
 				{/* Project header */}
-				<div className="text-center">
-					<h1 className="text-5xl!">{metadata.name}</h1>
-					<p className=" text-muted-foreground mt-2">{metadata.description}</p>
+				<div>
+					<h1>{metadata.name}</h1>
+					<p className="mt-2 text-muted-foreground">{metadata.description}</p>
 					{/*<div className="flex flex-wrap gap-3">
             {metadata.url && (
               <Link
@@ -88,7 +88,7 @@ export default async function ProjectPage({
 				</div>
 
 				{/* MDX content */}
-				<article className="max-w-3xl mx-auto">
+				<article>
 					<MDXRemote
 						source={content}
 						components={mdxComponents}

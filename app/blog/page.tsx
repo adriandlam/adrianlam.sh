@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { TransitionLink } from "@/components/transition-link";
-import { Skeleton } from "@/components/ui/skeleton";
 import { type BlogPost, getBlogPosts } from "@/lib/blog";
 import { formatDateShort } from "@/lib/utils";
 
@@ -14,8 +13,8 @@ export default async function BlogPage() {
 	const posts = await getBlogPosts();
 
 	return (
-		<main className="grid grid-cols-3 divide-x">
-			<div className="p-6 md:p-16">
+		<main className="grid md:grid-cols-3">
+			<div className="py-6 md:p-16">
 				<div className="md:sticky md:top-16">
 					<h1>Blog</h1>
 					<p className="mt-2 text-muted-foreground">
@@ -24,30 +23,23 @@ export default async function BlogPage() {
 					</p>
 				</div>
 			</div>
-			<div className="p-6 md:col-span-2 md:space-y-1 md:p-16">
+			<div className="py-6 md:col-span-2 md:space-y-1 md:p-16">
 				{posts.map((post: BlogPost) => (
-					<div
+					// first:-mt-6 cancels the first card's padding so its title lines up with the h1
+					<TransitionLink
 						key={post.slug}
-						className="relative h-32 overflow-hidden transition duration-200 ease-out hover:bg-accent/50"
+						href={`/blog/${post.slug}`}
+						direction="left"
+						className="-mx-6 block p-6 transition duration-200 ease-out first:-mt-6 hover:bg-accent/50"
 					>
-						<TransitionLink
-							href={`/blog/${post.slug}`}
-							direction="left"
-							className="absolute inset-0 z-10"
-							aria-label={`Read blog post: ${post.title}`}
-						/>
-						<div className="absolute inset-x-0 bottom-0 p-6">
-							<div className="space-y-1">
-								<span className="line-clamp-1 text-2xl">{post.title}</span>
-								<span className="line-clamp-1 text-muted-foreground text-sm">
-									{post.summary}
-								</span>
-							</div>
-							<span className="block text-muted-foreground text-xs font-mono mt-2">
-								{formatDateShort(post.publishedAt)}
-							</span>
-						</div>
-					</div>
+						<span className="line-clamp-1 text-2xl">{post.title}</span>
+						<span className="mt-1 line-clamp-1 text-muted-foreground text-sm">
+							{post.summary}
+						</span>
+						<span className="block text-muted-foreground text-xs font-mono mt-2">
+							{formatDateShort(post.publishedAt)}
+						</span>
+					</TransitionLink>
 					// <tr
 					//   key={post.slug}
 					//   className="hover:bg-muted/50 transition-colors relative group"

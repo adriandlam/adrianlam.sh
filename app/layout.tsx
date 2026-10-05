@@ -5,11 +5,8 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ViewTransitions } from "next-view-transitions";
 import Footer from "@/components/footer";
-import Nav from "@/components/nav";
 import { TickNav } from "@/components/tick-nav";
-import { getBlogPostsForNav } from "@/lib/blog";
 import { SITE_URL } from "@/lib/constants";
-import { getProjectsForNav } from "@/lib/projects";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -28,7 +25,7 @@ export const metadata: Metadata = {
 		template: "%s | Adrian Lam",
 	},
 	description:
-		"Software engineer, math student at UBC, and incoming intern at Cloudflare. Building things on the web.",
+		"Software engineer and math student at UBC. Previously at Cloudflare and Vercel.",
 	alternates: {
 		types: {
 			"application/rss+xml": "/feed",
@@ -36,16 +33,11 @@ export const metadata: Metadata = {
 	},
 };
 
-export default async function RootLayout({
+export default function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	const [blogPosts, projects] = await Promise.all([
-		getBlogPostsForNav(),
-		getProjectsForNav(),
-	]);
-
 	return (
 		<ViewTransitions>
 			<html
@@ -60,9 +52,8 @@ export default async function RootLayout({
 					>
 						Skip to main content
 					</a>
-					<div className="mt-12 max-w-4xl md:max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto">
+					<div className="mt-24 px-6 lg:mt-12 max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl mx-auto">
 						<TickNav />
-						{/*<Nav blogPosts={blogPosts} projects={projects} />*/}
 						<div
 							id="main-content"
 							tabIndex={-1}

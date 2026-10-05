@@ -54,49 +54,6 @@ export const getBlogPosts = unstable_cache(
 	},
 );
 
-// Lightweight function for navbar - only returns slug and title, filtered for nav
-const getBlogPostsForNavUncached = async (): Promise<
-	{ slug: string; title: string }[]
-> => {
-	const blogDirectory = path.join(process.cwd(), "content/blog");
-	const filenames = fs.readdirSync(blogDirectory);
-
-	const posts = filenames
-		.filter((filename) => filename.endsWith(".mdx"))
-		.map((filename) => {
-			const filePath = path.join(blogDirectory, filename);
-			const fileContent = fs.readFileSync(filePath, "utf8");
-			const { data } = matter(fileContent);
-			// Filter out draft, private, or explicitly hidden from nav
-			if (data.draft) return undefined;
-			if (data.private) return undefined;
-			if (data.showInNav === false) return undefined;
-			return {
-				slug: filename.replace(/\.mdx$/, ""),
-				title: data.title,
-				publishedAt: data.publishedAt,
-			};
-		})
-		.filter(Boolean) as { slug: string; title: string; publishedAt: string }[];
-
-	// Sort newest first, then strip publishedAt before returning
-	return posts
-		.sort(
-			(a, b) =>
-				new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
-		)
-		.map(({ slug, title }) => ({ slug, title }));
-};
-
-export const getBlogPostsForNav = unstable_cache(
-	getBlogPostsForNavUncached,
-	["blog-posts-for-nav"],
-	{
-		revalidate: false,
-		tags: ["blog"],
-	},
-);
-
 // Get a single blog post with metadata and content
 export type BlogPostWithContent = {
 	metadata: {

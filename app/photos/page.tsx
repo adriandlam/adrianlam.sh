@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 function PhotoGridSkeleton() {
 	return (
-		<div className="p-6 md:col-span-2 md:p-16 grid grid-cols-2 md:grid-cols-3 grid-flow-dense gap-4">
+		<div className="py-6 md:col-span-2 md:p-16 grid grid-cols-2 md:grid-cols-3 grid-flow-dense gap-4">
 			{Array.from({ length: 6 }).map((_, i) => (
 				<Skeleton
 					// biome-ignore lint/suspicious/noArrayIndexKey: static skeleton items
@@ -41,8 +41,8 @@ async function PhotoGridServer() {
 
 export default function PhotosPage() {
 	return (
-		<main className="grid divide-y md:grid-cols-3 md:divide-x md:divide-y-0">
-			<div className="p-6 md:p-16">
+		<main className="grid md:grid-cols-3">
+			<div className="py-6 md:p-16">
 				<div className="md:sticky md:top-16">
 					<h1>Photos</h1>
 					<p className="text-muted-foreground mt-2">

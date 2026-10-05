@@ -6,6 +6,12 @@
 @theme {
 	--font-sans: var(--font-geist-sans);
 	--font-mono: var(--font-geist-mono);
+
+	/* Vesper accents (matches the shiki code theme); used by <Callout> */
+	--color-vesper-orange: #ffc799;
+	--color-vesper-aqua: #99ffe4;
+	--color-vesper-red: #ff8080;
+	--color-vesper-teal: #82d8c1;
 }
 
 @custom-variant dark (&:is(.dark *));
@@ -212,7 +218,7 @@ html {
 }
 
 .link {
-	@apply cursor-default decoration-muted-foreground/40 decoration-1 underline-offset-4 underline hover:decoration-accent-foreground transition-all duration-200 ease-out;
+	@apply cursor-default underline decoration-foreground/20 decoration-1 underline-offset-4 hover:decoration-foreground/60 transition-colors duration-200 ease-out;
 }
 
 /* Fix list marker alignment */
@@ -272,15 +278,15 @@ h1 {
 }
 
 h2 {
-	@apply text-3xl;
-}
-
-h3 {
 	@apply text-2xl;
 }
 
-h4 {
+h3 {
 	@apply text-xl;
+}
+
+h4 {
+	@apply text-lg;
 }
 
 h5 {
@@ -390,7 +396,7 @@ details summary::-webkit-details-marker {
 
 /* ── Typography: widow/orphan prevention ── */
 p {
-    text-wrap: pretty;
+	text-wrap: pretty;
 }
 
 h1,
@@ -399,30 +405,30 @@ h3,
 h4,
 h5,
 h6 {
-    text-wrap: balance;
+	text-wrap: balance;
 }
 
 /* ── Shiki transformer annotations (@shikijs/transformers) ── */
 
 /* // [!code highlight] */
 code [data-line].highlighted {
-    @apply bg-accent-foreground/5 -mx-3 pl-2.5 border-l-2 border-accent-foreground;
+	@apply bg-accent-foreground/5 -mx-3 pl-2.5 border-l-2 border-accent-foreground;
 }
 
 /* // [!code ++] and [!code --] */
 code [data-line].diff.add {
-    @apply bg-emerald-500/15;
+	@apply bg-emerald-500/15;
 }
 
 code [data-line].diff.remove {
-    @apply bg-rose-500/15 opacity-70;
+	@apply bg-rose-500/15 opacity-70;
 }
 
 /* // [!code focus]: dim non-focused lines until the block is hovered */
 pre.has-focused [data-line]:not(.focused) {
-    @apply opacity-40 blur-[1.5px] transition-[opacity,filter] duration-200;
+	@apply opacity-40 blur-[1.5px] transition-[opacity,filter] duration-200;
 }
 
 pre.has-focused:hover [data-line]:not(.focused) {
-    @apply opacity-100 blur-none;
+	@apply opacity-100 blur-none;
 }

@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useTransitionRouter } from "next-view-transitions";
 import { useCallback, useEffect, useState } from "react";
 import { slideTransition } from "@/lib/transitions";
-import { cn } from "@/lib/utils";
+import { cn, isKeyboardFocus } from "@/lib/utils";
 
 const items = [
 	{ name: "Home", href: "/", description: "Back to start" },
@@ -70,7 +70,7 @@ export function TickNav() {
 	return (
 		<nav
 			aria-label="Primary"
-			className="fixed left-8 top-8 z-50 flex flex-col"
+			className="absolute left-0 top-6 z-50 lg:fixed flex flex-col"
 			onMouseLeave={() => setHovered(null)}
 		>
 			{items.map((item, i) => {
@@ -89,9 +89,11 @@ export function TickNav() {
 						href={item.href}
 						aria-label={item.name}
 						aria-current={isActive ? "page" : undefined}
-						className="group relative flex items-center py-1.5 pr-4 cursor-default rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+						className="group relative flex w-20 items-center py-2 pl-8 cursor-default rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 						onMouseEnter={() => setHovered(i)}
-						onFocus={() => setFocused(i)}
+						onFocus={(event) =>
+							setFocused(isKeyboardFocus(event.currentTarget) ? i : null)
+						}
 						onBlur={() => setFocused(null)}
 						onClick={(event) => {
 							if (
@@ -119,7 +121,7 @@ export function TickNav() {
 						<AnimatePresence>
 							{highlightedIndex === i && (
 								<motion.div
-									className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 whitespace-nowrap bg-card px-1.5 py-1 border rounded-md text-sm"
+									className="pointer-events-none absolute left-full top-1/2 w-max -translate-y-1/2 whitespace-nowrap bg-card px-1.5 py-1 border rounded-md text-sm"
 									initial={{
 										opacity: 0,
 										transform: shouldReduceMotion

@@ -62,5 +62,7 @@ export function CalloutTitle({ children }: { children: ReactNode }) {
 	);
 }
 export function CalloutDescription({ children }: { children: ReactNode }) {
-	return <div className="text-sm [&_p]:leading-relaxed">{children}</div>;
+	return (
+		<div className="text-sm [&_p]:mb-0 [&_p]:leading-relaxed">{children}</div>
+	);
 }

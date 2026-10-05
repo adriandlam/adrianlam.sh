@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
-import { TocTickNav } from "@/components/toc-tick-nav";
 import { KatexStyles } from "@/components/katex-styles";
+import { TocTickNav } from "@/components/toc-tick-nav";
 import { Badge } from "@/components/ui/badge";
 import { getBlogPost, getBlogPosts } from "@/lib/blog";
 import { SITE_URL } from "@/lib/constants";
@@ -87,16 +87,16 @@ export default async function Page({
 	const usesMath = content.includes("$") || content.includes("\\(");
 
 	return (
-		<main className="mt-16">
+		<main className="pt-6 md:pt-16">
 			{usesMath && <KatexStyles />}
-			<div className="relative">
+			<div>
 				<TocTickNav
 					items={headings}
 					backHref="/blog"
 					backLabel="Back to blogs"
 				/>
-				<article className="space-y-12">
-					<header className="text-center">
+				<article className="mx-auto max-w-xl space-y-12">
+					<header>
 						{metadata.coverImage && (
 							<div className="mb-6">
 								<Image
@@ -110,15 +110,13 @@ export default async function Page({
 								/>
 							</div>
 						)}
-						<h1 className="text-5xl! leading-[1.1] text-balance mb-3">
-							{metadata.title}
-						</h1>
+						<h1 className="mb-3">{metadata.title}</h1>
 						{metadata.excerpt && (
 							<p className="text-xl text-muted-foreground mb-2">
 								{metadata.excerpt}
 							</p>
 						)}
-						<div className="flex items-center text-muted-foreground text-sm mt-2 gap-2 w-full justify-center">
+						<div className="flex items-center text-muted-foreground text-sm mt-2 gap-2">
 							<time dateTime={metadata.publishedAt} className="font-mono">
 								{formattedDate}
 							</time>
@@ -133,7 +131,7 @@ export default async function Page({
 							</div>
 						)}
 					</header>
-					<div className="max-w-2xl mx-auto">
+					<div>
 						<MDXRemote
 							source={content}
 							components={mdxComponents}
